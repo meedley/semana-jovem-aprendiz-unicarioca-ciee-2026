@@ -16,7 +16,7 @@ Uma aplicação web simples construída com React para organizar tarefas do dia 
 
 ## 📸 Demonstração
 
-🔗 ![Preview](https://meedley.github.io/semana-jovem-aprendiz-unicarioca-ciee-2026/)
+🔗 https://meedley.github.io/semana-jovem-aprendiz-unicarioca-ciee-2026/
 
 ---
 
