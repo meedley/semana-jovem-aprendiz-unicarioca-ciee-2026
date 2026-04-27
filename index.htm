@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Minha Lista Inteligente</title>
+
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #101828, #1d4ed8);
+      color: #111827;
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    .app {
+      max-width: 1000px;
+      margin: auto;
+      background: #ffffff;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+      animation: aparecer 0.7s ease;
+    }
+
+    @keyframes aparecer {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+      padding: 40px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      margin: 0 0 12px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.5;
+      opacity: 0.95;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      padding: 8px 12px;
+      border-radius: 999px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .hero-img {
+      background: rgba(255,255,255,0.16);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .conteudo {
+      padding: 35px 40px;
+    }
+
+    .painel {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .card strong {
+      font-size: 26px;
+      color: #2563eb;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    input {
+      flex: 1;
+      padding: 14px;
+      font-size: 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      opacity: 0.92;
+    }
+
+    .btn-principal {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-concluir {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-remover {
+      background: #ef4444;
+      color: white;
+    }
+
+    .erro {
+      color: #dc2626;
+      margin-top: 8px;
+    }
+
+    .tarefa {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      margin-top: 12px;
+      padding: 15px;
+      border-radius: 14px;
+      animation: surgir 0.3s ease;
+    }
+
+    @keyframes surgir {
+      from {
+        opacity: 0;
+        transform: scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .concluida {
+      text-decoration: line-through;
+      color: #6b7280;
+    }
+
+    .acoes {
+      display: flex;
+      gap: 8px;
+    }
+
+    .vazio {
+      text-align: center;
+      padding: 25px;
+      color: #6b7280;
+      border: 2px dashed #d1d5db;
+      border-radius: 16px;
+      background: #f9fafb;
+    }
+
+    footer {
+      text-align: center;
+      padding: 18px;
+      background: #f3f4f6;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 750px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .painel {
+        grid-template-columns: 1fr;
+      }
+
+      form {
+        flex-direction: column;
+      }
+
+      .tarefa {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+
+    function ImagemHero() {
+      return (
+        <svg viewBox="0 0 400 260" width="100%" role="img" aria-label="Ilustração de produtividade">
+          <rect x="20" y="25" width="360" height="210" rx="24" fill="white" opacity="0.95"/>
+          <rect x="55" y="60" width="190" height="22" rx="8" fill="#2563eb"/>
+          <rect x="55" y="100" width="290" height="18" rx="8" fill="#c7d2fe"/>
+          <rect x="55" y="135" width="250" height="18" rx="8" fill="#ddd6fe"/>
+          <rect x="55" y="170" width="210" height="18" rx="8" fill="#bfdbfe"/>
+          <circle cx="315" cy="72" r="28" fill="#10b981"/>
+          <path d="M303 72 L312 82 L330 61" stroke="white" strokeWidth="8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      );
+    }
+
+    function Titulo() {
+      return (
+        <section className="hero">
+          <div>
+            <span className="badge">Mini Web SaaS • React + IA + Deploy</span>
+            <h1>Minha Lista Inteligente</h1>
+            <p>
+              Uma aplicação simples, bonita e funcional para organizar tarefas,
+              validar ideias e dar os primeiros passos no desenvolvimento de produtos web.
+            </p>
+          </div>
+
+          <div className="hero-img">
+            <ImagemHero />
+          </div>
+        </section>
+      );
+    }
+
+    function PainelResumo({ tarefas }) {
+      const total = tarefas.length;
+      const concluidas = tarefas.filter(t => t.concluida).length;
+      const pendentes = total - concluidas;
+
+      return (
+        <div className="painel">
+          <div className="card">
+            <strong>{total}</strong>
+            <p>Total de tarefas</p>
+          </div>
+
+          <div className="card">
+            <strong>{pendentes}</strong>
+            <p>Pendentes</p>
+          </div>
+
+          <div className="card">
+            <strong>{concluidas}</strong>
+            <p>Concluídas</p>
+          </div>
+        </div>
+      );
+    }
+
+    function FormularioTarefa({ adicionarTarefa }) {
+      const [texto, setTexto] = React.useState("");
+      const [erro, setErro] = React.useState("");
+
+      function enviarFormulario(e) {
+        e.preventDefault();
+
+        if (texto.trim() === "") {
+          setErro("Digite uma tarefa antes de adicionar.");
+          return;
+        }
+
+        adicionarTarefa(texto);
+        setTexto("");
+        setErro("");
+      }
+
+      return (
+        <form onSubmit={enviarFormulario}>
+          <input
+            type="text"
+            placeholder="Ex.: estudar React por 30 minutos"
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+          />
+
+          <button className="btn-principal" type="submit">
+            + Adicionar
+          </button>
+
+          {erro && <p className="erro">{erro}</p>}
+        </form>
+      );
+    }
+
+    function ItemTarefa({ tarefa, concluirTarefa, removerTarefa }) {
+      return (
+        <div className="tarefa">
+          <span className={tarefa.concluida ? "concluida" : ""}>
+            {tarefa.texto}
+          </span>
+
+          <div className="acoes">
+            {!tarefa.concluida && (
+              <button className="btn-concluir" onClick={() => concluirTarefa(tarefa.id)}>
+                Concluir
+              </button>
+            )}
+
+            <button className="btn-remover" onClick={() => removerTarefa(tarefa.id)}>
+              Remover
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function ListaTarefas({ tarefas, concluirTarefa, removerTarefa }) {
+      if (tarefas.length === 0) {
+        return (
+          <div className="vazio">
+            Nenhuma tarefa cadastrada ainda. Comece adicionando sua primeira tarefa.
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          {tarefas.map((tarefa) => (
+            <ItemTarefa
+              key={tarefa.id}
+              tarefa={tarefa}
+              concluirTarefa={concluirTarefa}
+              removerTarefa={removerTarefa}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    function App() {
+      const [tarefas, setTarefas] = React.useState(() => {
+        const tarefasSalvas = localStorage.getItem("tarefas");
+        return tarefasSalvas ? JSON.parse(tarefasSalvas) : [];
+      });
+
+      React.useEffect(() => {
+        localStorage.setItem("tarefas", JSON.stringify(tarefas));
+      }, [tarefas]);
+
+      function adicionarTarefa(texto) {
+        const novaTarefa = {
+          id: Date.now(),
+          texto: texto,
+          concluida: false
+        };
+
+        setTarefas([...tarefas, novaTarefa]);
+      }
+
+      function concluirTarefa(id) {
+        const novasTarefas = tarefas.map((tarefa) => {
+          if (tarefa.id === id) {
+            return { ...tarefa, concluida: true };
+          }
+
+          return tarefa;
+        });
+
+        setTarefas(novasTarefas);
+      }
+
+      function removerTarefa(id) {
+        const novasTarefas = tarefas.filter((tarefa) => tarefa.id !== id);
+        setTarefas(novasTarefas);
+      }
+
+      return (
+        <div className="app">
+          <Titulo />
+
+          <main className="conteudo">
+            <PainelResumo tarefas={tarefas} />
+
+            <FormularioTarefa adicionarTarefa={adicionarTarefa} />
+
+            <h2>Minhas tarefas</h2>
+
+            <ListaTarefas
+              tarefas={tarefas}
+              concluirTarefa={concluirTarefa}
+              removerTarefa={removerTarefa}
+            />
+          </main>
+
+          <footer>
+            Projeto didático • React via CDN • Dados salvos no navegador
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById("root"));
+
+  </script>
+</body>
+</html>
